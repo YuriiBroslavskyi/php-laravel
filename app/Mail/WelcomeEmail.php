@@ -7,18 +7,18 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Attachment; // 1. Import Attachment
 use Illuminate\Queue\SerializesModels;
+use Barryvdh\DomPDF\Facade\Pdf;           // 2. Import PDF Facade
 
 class WelcomeEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    // 1. Accept the User model in the constructor
     public function __construct(
         public User $user
     ) {}
 
-    // 2. Define the subject
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -26,11 +26,20 @@ class WelcomeEmail extends Mailable
         );
     }
 
-    // 3. Point to the view
     public function content(): Content
     {
+        // You can keep a simple body message here, e.g., "Please find the attached PDF."
         return new Content(
-            view: 'emails.welcome',
+            view: 'emails.welcome', 
         );
+    }
+
+    // 3. Add this new method to handle the attachment
+    public function attachments(): array
+    {
+        return [
+            Attachment::fromData(fn () => Pdf::loadView('pdfs.welcome_pdf', ['user' => $this->user])->output(), 'Welcome.pdf')
+                ->withMime('application/pdf'),
+        ];
     }
 }

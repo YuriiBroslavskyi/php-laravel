@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Hello, {{ $user->name }}!</h1>
-    <p>Thank you for registering with us. We are excited to have you on board.</p>
+    <p>Please check this pdf file attached to the email.</p>
     <p>
         <a href="{{ url('/') }}">Visit our site</a>
     </p>
